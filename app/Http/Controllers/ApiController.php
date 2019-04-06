@@ -107,12 +107,14 @@ class ApiController extends Controller
             case 1:
                 $collection = Ct::where('tipo', '=', $tipo)
                     ->where('nombre_mun', '=', $mun)
+                    ->orderBy('nombre', 'asc')
                     ->get();
                 return $collection;
                 break;
             case 2:
                 $collection = Ct::where('nivel', '=', $tipo)
                     ->where('nombre_mun', '=', $mun)
+                    ->orderBy('nombre', 'asc')
                     ->get();
                 return $collection;
                 break;
