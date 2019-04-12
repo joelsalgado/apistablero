@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Adultos;
 use App\Ct;
+use App\CtsMaps;
 use App\Especial;
 use App\Fisica;
 use App\Graf1;
@@ -13,6 +14,7 @@ use App\GrafOtros;
 use App\GrafOtros2;
 use App\Indigena;
 use App\Inicial;
+use App\Municipios;
 use App\Prescolar;
 use App\Primaria;
 use App\SecuGral;
@@ -99,6 +101,40 @@ class ApiController extends Controller
     public function grafAdmin1()
     {
         return GrafAdmin::all();
+    }
+
+    public function municipios()
+    {
+        return Municipios::all();
+    }
+
+    public function ctsmaps()
+    {
+        return CtsMaps::all();
+    }
+
+    public function ctsmaps2($array1, $array2)
+    {
+        if($array1 == null && $array2 == null){
+            return CtsMaps::all();
+        }
+
+        if($array1 != null && $array2 == null){
+            return CtsMaps::whereIn('nombre_mun' , $array1)
+                ->get();
+        }
+
+        if($array1 == null && $array2 != null){
+            return CtsMaps::whereIn('nivel' , $array2)
+                ->get();
+        }
+
+        if($array1 != null && $array2 != null){
+            return CtsMaps::whereIn('nombre_mun' , $array1)
+                ->whereIn('nivel' , $array2)
+                ->get();
+        }
+
     }
 
     public function getCts($mun, $tipo,$cual)

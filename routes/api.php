@@ -26,6 +26,9 @@ Route::get('grafEdu3/{value}', 'ApiController@grafEdu3');
 Route::get('grafOtros1', 'ApiController@grafOtros1');
 Route::get('grafOtros2', 'ApiController@grafOtros2');
 Route::get('grafAdmin1', 'ApiController@grafAdmin1');
+Route::get('municipios', 'ApiController@municipios');
+Route::get('ctsmap', 'ApiController@ctsmaps');
+Route::get('ctsmap2', 'ApiController@ctsmaps2');
 
 Route::get('getCts/{mun}/{tipo}/{cual}', 'ApiController@getCts');
 
