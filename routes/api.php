@@ -47,4 +47,7 @@ Route::get('getAdicionalesPrim/{alumno_id}', 'ApiController@getAdicionalesPrim')
 Route::get('getContactoPrim/{alumno_id}', 'ApiController@getContactoPrim');
 
 Route::get('getGradosSecundaria/{id}', 'ApiController@getGradosSecundaria');
-
+Route::get('getSexoSecu/{id}', 'ApiController@getSexoSecu');
+Route::get('getGruposSecu/{id}/{grado}/{turno}', 'ApiController@getGruposSecu');
+Route::get('getAlumSec/{grupo_id}', 'ApiController@getAlumSec');
+Route::get('getGrupoSecu/{id}/{grado}/{turno}/{desciption}', 'ApiController@getGrupoSecu');

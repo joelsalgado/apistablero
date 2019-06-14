@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\AdicionalesPrimaria;
 use App\Adultos;
 use App\AlumnosPrimaria;
+use App\AlumnSecu;
 use App\AlumPrim;
 use App\ContactoPrimaria;
 use App\Ct;
@@ -21,6 +22,7 @@ use App\GrafEdu;
 use App\GrafOtros;
 use App\GrafOtros2;
 use App\GruposPrimaria;
+use App\GruposSecu;
 use App\Indigena;
 use App\Inicial;
 use App\Municipios;
@@ -29,6 +31,7 @@ use App\Primaria;
 use App\SecuGral;
 use App\SecuTec;
 use App\SexoPrimaria;
+use App\SexoSecu;
 use App\Superior;
 use App\TeleSec;
 use App\TutoPrimaria;
@@ -148,6 +151,27 @@ class ApiController extends Controller
         $val1 = is_array($val11);
         $val2 = is_array($val22);
 
+        $modalidades = array();
+        $modalidades1 = null;
+        $modalidades2 = null;
+
+        foreach ($val22 as $value){
+            switch ($value) {
+                case "EDUCACION PRIMARIA":
+                    $modalidades1 = ["DPR", "DPB", "PPR", "FIZ"];
+                    break;
+                case "EDUCACION SECUNDARIA GENERAL":
+                    $modalidades2 = ['PES', 'DST', 'DTV', 'DSN', 'PST','DES'];
+                    break;
+
+            }
+        }
+        if($modalidades1 != null){
+            array_push($modalidades1,$modalidades2);
+            $modalidades = $modalidades1;
+        }else{
+            $modalidades = $modalidades2;
+        }
 
 
         if($val1 == false && $val2 == false){
@@ -160,13 +184,13 @@ class ApiController extends Controller
         }
 
         elseif($val1 == false && $val2 == true){
-            return CtsMaps::whereIn('nivel' , $val22)
+            return CtsMaps::whereIn('modalidad' , $modalidades)
                 ->get();
         }
 
         elseif($val1 == true && $val2 == true){
             return CtsMaps::whereIn('nombre_mun' , $val11)
-                ->whereIn('nivel' , $val22)
+                ->whereIn('modalidad' , $modalidades)
                 ->get();
         }
 
@@ -229,6 +253,7 @@ class ApiController extends Controller
 
     public function getAlumnosPrimaria($grupo_id){
         $alumnos = AlumnosPrimaria::where('grupo_id', '=', $grupo_id )
+            ->orderBy('nombre', 'asc')
             ->get();
         if($alumnos){
             return $alumnos;
@@ -237,6 +262,7 @@ class ApiController extends Controller
 
     public function getAlumPrim($grupo_id){
         $alumnos = AlumPrim::where('grupo_id', '=', $grupo_id )
+            ->orderBy('nombre', 'asc')
             ->get();
         if($alumnos){
             return $alumnos;
@@ -311,9 +337,61 @@ class ApiController extends Controller
 
 
     public function getGradosSecundaria($id){
-        $grados = GradosSecundaria::where('ct_id', '=', $id )->get();
+        $grados = GradosSecundaria::where('ct_id', '=', $id )->orderBy('grado', 'asc')->get();
         if($grados){
             return $grados;
+        }
+    }
+
+    public function getSexoSecu($id){
+        $sexo = SexoSecu::where('ct_id', '=', $id )->get();
+        if($sexo){
+            return $sexo;
+        }
+    }
+
+
+    public function getGruposSecu($id, $grado, $turno){
+        if ($turno == 'null') {
+            $grupo = GruposSecu::where('ct_id', '=', $id )
+                ->where('grado_id', '=', $grado)
+                ->get();
+        } else {
+            $grupo = GruposSecu::where('ct_id', '=', $id )
+                ->where('grado_id', '=', $grado)
+                ->where('turno_id', '=', $turno)
+                ->get();
+        }
+        if($grupo){
+            return $grupo;
+        }
+    }
+
+    public function getAlumSec($grupo_id){
+        $alumnos = AlumnSecu::where('grupo_id', '=', $grupo_id )
+            ->orderBy('nombre', 'asc')
+            ->get();
+        if($alumnos){
+            return $alumnos;
+        }
+    }
+
+    public function getGrupoSecu($id, $grado, $turno, $desciption){
+        if ($turno == 0) {
+            $grupo = GruposSecu::where('ct_id', '=', $id )
+                ->where('grado_id', '=', $grado)
+                ->where('descripcion', '=', $desciption)
+                ->first();
+        } else {
+            $grupo = GruposSecu::where('ct_id', '=', $id )
+                ->where('grado_id', '=', $grado)
+                ->where('turno_id', '=', $turno)
+                ->where('descripcion', '=', $desciption)
+                ->first();
+        }
+
+        if($grupo){
+            return $grupo;
         }
     }
 
