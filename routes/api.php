@@ -51,3 +51,9 @@ Route::get('getSexoSecu/{id}', 'ApiController@getSexoSecu');
 Route::get('getGruposSecu/{id}/{grado}/{turno}', 'ApiController@getGruposSecu');
 Route::get('getAlumSec/{grupo_id}', 'ApiController@getAlumSec');
 Route::get('getGrupoSecu/{id}/{grado}/{turno}/{desciption}', 'ApiController@getGrupoSecu');
+
+Route::get('getGradosPres/{id}', 'ApiController@getGradosPres');
+Route::get('getSexoPres/{id}', 'ApiController@getSexoPres');
+Route::get('getGruposPres/{id}/{grado}', 'ApiController@getGruposPres');
+Route::get('getAlumPres/{grupo_id}', 'ApiController@getAlumPres');
+Route::get('getGrupoPres/{id}/{grado}/{description}', 'ApiController@getGrupoPres');

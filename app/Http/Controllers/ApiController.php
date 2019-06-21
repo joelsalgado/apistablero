@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\AdicionalesPrimaria;
 use App\Adultos;
+use App\AlumnosPres;
 use App\AlumnosPrimaria;
 use App\AlumnSecu;
 use App\AlumPrim;
@@ -14,6 +15,7 @@ use App\DatosGeneralesPrimaria;
 use App\DireccionPrimaria;
 use App\Especial;
 use App\Fisica;
+use App\GradosPrescolar;
 use App\GradosPrimaria;
 use App\GradosSecundaria;
 use App\Graf1;
@@ -21,6 +23,7 @@ use App\GrafAdmin;
 use App\GrafEdu;
 use App\GrafOtros;
 use App\GrafOtros2;
+use App\GruposPres;
 use App\GruposPrimaria;
 use App\GruposSecu;
 use App\Indigena;
@@ -30,6 +33,7 @@ use App\Prescolar;
 use App\Primaria;
 use App\SecuGral;
 use App\SecuTec;
+use App\SexoPres;
 use App\SexoPrimaria;
 use App\SexoSecu;
 use App\Superior;
@@ -119,7 +123,8 @@ class ApiController extends Controller
 
     public function municipios()
     {
-        return Municipios::all();
+        return Municipios::orderBy('nombre', 'asc')
+            ->get();
     }
 
     public function ctsmaps()
@@ -152,8 +157,9 @@ class ApiController extends Controller
         $val2 = is_array($val22);
 
         $modalidades = array();
-        $modalidades1 = null;
-        $modalidades2 = null;
+        $modalidades1 = array();
+        $modalidades2 = array();
+        $modalidades3 = array();
 
         foreach ($val22 as $value){
             switch ($value) {
@@ -163,15 +169,14 @@ class ApiController extends Controller
                 case "EDUCACION SECUNDARIA GENERAL":
                     $modalidades2 = ['PES', 'DST', 'DTV', 'DSN', 'PST','DES'];
                     break;
+                case "EDUCACION PRESCOLAR":
+                    $modalidades3 = ['DCC', 'DJN', 'NJN', 'PJN'];
+                    break;
 
             }
         }
-        if($modalidades1 != null){
-            array_push($modalidades1,$modalidades2);
-            $modalidades = $modalidades1;
-        }else{
-            $modalidades = $modalidades2;
-        }
+
+        $modalidades = array_merge($modalidades1, $modalidades2,$modalidades3);
 
 
         if($val1 == false && $val2 == false){
@@ -390,6 +395,48 @@ class ApiController extends Controller
                 ->first();
         }
 
+        if($grupo){
+            return $grupo;
+        }
+    }
+
+    public function getGradosPres($id){
+        $grados = GradosPrescolar::where('ct_id', '=', $id )->orderBy('grado', 'asc')->get();
+        if($grados){
+            return $grados;
+        }
+    }
+
+    public function getSexoPres($id){
+        $sexo = SexoPres::where('ct_id', '=', $id )->get();
+        if($sexo){
+            return $sexo;
+        }
+    }
+
+    public function getGruposPres($id, $grado){
+        $grupos = GruposPres::where('ct_id', '=', $id )
+            ->where('grado_id', '=', $grado)
+            ->get();
+        if($grupos){
+            return $grupos;
+        }
+    }
+
+    public function getAlumPres($grupo_id){
+        $alumnos = AlumnosPres::where('grupo_id', '=', $grupo_id )
+            ->orderBy('nombre', 'asc')
+            ->get();
+        if($alumnos){
+            return $alumnos;
+        }
+    }
+
+    public function getGrupoPres($id, $grado, $desciption){
+        $grupo = GruposPres::where('ct_id', '=', $id )
+            ->where('grado_id', '=', $grado)
+            ->where('descripcion', '=', $desciption)
+            ->first();
         if($grupo){
             return $grupo;
         }
