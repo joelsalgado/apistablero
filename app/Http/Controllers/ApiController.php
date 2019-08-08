@@ -15,6 +15,8 @@ use App\DatosGeneralesPrimaria;
 use App\DireccionPrimaria;
 use App\Especial;
 use App\Fisica;
+use App\GeneralEmpleados;
+use App\GeneralesCts;
 use App\GradosPrescolar;
 use App\GradosPrimaria;
 use App\GradosSecundaria;
@@ -29,6 +31,7 @@ use App\GruposSecu;
 use App\Indigena;
 use App\Inicial;
 use App\Municipios;
+use App\Plantilla;
 use App\Prescolar;
 use App\Primaria;
 use App\SecuGral;
@@ -381,6 +384,14 @@ class ApiController extends Controller
         }
     }
 
+    public function getCalifSecu($alumno_id){
+        $alumno = AlumnSecu::where('alumno_id', '=', $alumno_id )
+            ->first();
+        if($alumno){
+            return $alumno;
+        }
+    }
+
     public function getGrupoSecu($id, $grado, $turno, $desciption){
         if ($turno == 0) {
             $grupo = GruposSecu::where('ct_id', '=', $id )
@@ -439,6 +450,34 @@ class ApiController extends Controller
             ->first();
         if($grupo){
             return $grupo;
+        }
+    }
+
+    public function getGralCt($claveCt){
+        $gralCt = GeneralesCts::where('clave_ct', '=', $claveCt)->first();
+        if($gralCt){
+            return $gralCt;
+        }
+    }
+
+    public function getPlantilla($claveCt){
+        $gralCt = Plantilla::where('ct_clave', '=', $claveCt)->groupBy('nombre')->orderBy('nombre', 'asc')->get();
+        if($gralCt){
+            return $gralCt;
+        }
+    }
+
+    public function getGeneralEmpleados($rfc){
+        $empleado = GeneralEmpleados::where('rfc', '=', $rfc)->first();
+        if($empleado){
+            return $empleado;
+        }
+    }
+
+    public function getClavePresupuestal($rfc){
+        $clave = Plantilla::where('rfc', '=', $rfc)->get();
+        if($clave){
+            return $clave;
         }
     }
 
