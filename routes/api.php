@@ -66,3 +66,17 @@ Route::get('getPlantilla/{claveCt}', 'ApiController@getPlantilla');
 Route::get('getGeneralEmpleados/{rfc}', 'ApiController@getGeneralEmpleados');
 
 Route::get('getClavePresupuestal/{rfc}', 'ApiController@getClavePresupuestal');
+
+Route::get('searchAlumnos/{nombre}', 'ApiController@searchAlumnos');
+Route::get('searchEscuelas/{nombre}', 'ApiController@searchEscuelas');
+Route::get('searchDocentes/{nombre}', 'ApiController@searchDocentes');
+
+Route::get('searchUser/{user}', 'ApiController@searchUser');
+Route::get('loginFor/{user}/{pass}', 'ApiController@loginFor');
+
+Route::get('filterEscuelas/{array1}/{array2}/{nombre}', 'ApiController@filterEscuelas');
+Route::get('filterAlumnos/{array1}/{array2}/{nombre}', 'ApiController@filterAlumnos');
+Route::get('filterDocentes/{nombre}/{mun}', 'ApiController@filterDocentes');
+
+Route::get('blog', 'ApiController@blog');
+Route::get('article/{id}', 'ApiController@article');

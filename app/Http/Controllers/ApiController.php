@@ -42,8 +42,11 @@ use App\SexoSecu;
 use App\Superior;
 use App\TeleSec;
 use App\TutoPrimaria;
+use App\Usuarios;
+use App\Blog;
 use function Couchbase\defaultDecoder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ApiController extends Controller
 {
@@ -479,6 +482,235 @@ class ApiController extends Controller
         if($clave){
             return $clave;
         }
+    }
+
+    public function searchAlumnos($nombre){
+        $nomb = explode(' ', $nombre);
+        //var_dump($nombre); die;
+
+        $name = DB::Table('alumnos_search')
+            ->select('alumno_id', 'nombre','nivel','clave', 'escuela', 'municipio', 'localidad')
+            ->Where(function ($query) use($nomb) {
+                for ($i = 0; $i < count($nomb); $i++){
+                    $query->where('nombre', 'like',  '%' . $nomb[$i] .'%');
+                }
+            })->orderBy('nombre', 'asc')->groupBy('alumno_id')->get();
+
+        return $name;
+    }
+
+    public function filterAlumnos($array1, $array2, $nombre)
+    {
+        $nomb = explode(' ', $nombre);
+
+        if($array2 != 'null'){
+            switch ($array2) {
+                case "EDUCACION PRIMARIA":
+                    $modalidades = 2;
+                    break;
+                case "EDUCACION SECUNDARIA GENERAL":
+                    $modalidades = 3;
+                    break;
+                case "EDUCACION PRESCOLAR":
+                    $modalidades = 1;
+                    break;
+
+            }
+        }
+        $value1 = $array1 == 'null' ? 0 : $array1;
+        $value2 = $array2 == 'null' ? 0 : $array2;
+
+
+
+        if($value1 === 0 && $value2 === 0){
+            return DB::Table('alumnos_search')
+                ->select('alumno_id', 'nombre','nivel','clave', 'escuela', 'municipio', 'localidad')
+                ->Where(function ($query) use($nomb) {
+                    for ($i = 0; $i < count($nomb); $i++){
+                        $query->where('nombre', 'like',  '%' . $nomb[$i] .'%');
+                    }
+                })->orderBy('nombre', 'asc')->groupBy('alumno_id')->get();
+
+        }
+
+        elseif($value1 !== 0 && $value2 === 0){
+            return DB::Table('alumnos_search')
+                ->select('alumno_id', 'nombre','nivel','clave', 'escuela', 'municipio', 'localidad')
+                ->Where('municipio' , $array1)
+                ->Where(function ($query) use($nomb) {
+                    for ($i = 0; $i < count($nomb); $i++){
+                        $query->where('nombre', 'like',  '%' . $nomb[$i] .'%');
+                    }
+                })->orderBy('nombre', 'asc')->groupBy('alumno_id')->get();
+
+        }
+
+        elseif($value1 === 0 && $value2 ==! 0){
+            return DB::Table('alumnos_search')
+                ->select('alumno_id', 'nombre','nivel','clave', 'escuela', 'municipio', 'localidad')
+                ->Where('nivel' , $modalidades)
+                ->Where(function ($query) use($nomb) {
+                    for ($i = 0; $i < count($nomb); $i++){
+                        $query->where('nombre', 'like',  '%' . $nomb[$i] .'%');
+                    }
+                })->orderBy('nombre', 'asc')->groupBy('alumno_id')->get();
+        }
+        elseif($value1 ==! 0 && $value2 ==! 0){
+            return DB::Table('alumnos_search')
+                ->select('alumno_id', 'nombre','nivel','clave', 'escuela', 'municipio', 'localidad')
+                ->Where('municipio' , $array1)
+                ->Where('nivel' , $modalidades)
+                ->Where(function ($query) use($nomb) {
+                    for ($i = 0; $i < count($nomb); $i++){
+                        $query->where('nombre', 'like',  '%' . $nomb[$i] .'%');
+                    }
+                })->orderBy('nombre', 'asc')->groupBy('alumno_id')->get();
+        }
+
+    }
+
+    public function searchEscuelas($nombre){
+        $nomb = explode(' ', $nombre);
+        //var_dump($nombre); die;
+
+        $name = DB::Table('cts')
+            ->select('clave', 'nombre','nombre_mun', 'localidad', 'modalidad')
+            ->Where(function ($query) use($nomb) {
+                for ($i = 0; $i < count($nomb); $i++){
+                    $query->where('nombre', 'like',  '%' . $nomb[$i] .'%');
+                }
+            })->orderBy('nombre', 'asc')->groupBy('clave')->get();
+
+        return $name;
+    }
+
+    public function filterEscuelas($array1, $array2, $nombre)
+    {
+        $nomb = explode(' ', $nombre);
+
+        if($array2 != 'null'){
+            switch ($array2) {
+                case "EDUCACION PRIMARIA":
+                    $modalidades = ["DPR", "DPB", "PPR", "FIZ"];
+                    break;
+                case "EDUCACION SECUNDARIA GENERAL":
+                    $modalidades = ["PES", "DST", "DTV", "DSN", "PST","DES"];
+                    break;
+                case "EDUCACION PRESCOLAR":
+                    $modalidades = ["DCC", "DJN", "NJN", "PJN"];
+                    break;
+
+            }
+        }
+        $value1 = $array1 == 'null' ? 0 : $array1;
+        $value2 = $array2 == 'null' ? 0 : $array2;
+
+
+
+        if($value1 === 0 && $value2 === 0){
+            return DB::Table('cts')
+                ->select('clave', 'nombre','nombre_mun', 'localidad')
+                ->Where(function ($query) use($nomb) {
+                    for ($i = 0; $i < count($nomb); $i++){
+                        $query->where('nombre', 'like',  '%' . $nomb[$i] .'%');
+                    }
+                })->orderBy('nombre', 'asc')->groupBy('clave')->get();
+
+        }
+
+        elseif($value1 !== 0 && $value2 === 0){
+            return DB::Table('cts')
+                ->select('clave', 'nombre','nombre_mun', 'localidad')
+                ->Where('nombre_mun' , $array1)
+                ->Where(function ($query) use($nomb) {
+                    for ($i = 0; $i < count($nomb); $i++){
+                        $query->where('nombre', 'like',  '%' . $nomb[$i] .'%');
+                    }
+                })->orderBy('nombre', 'asc')->groupBy('clave')->get();
+
+        }
+
+        elseif($value1 === 0 && $value2 ==! 0){
+            return DB::Table('cts')
+                ->select('clave', 'nombre','nombre_mun', 'localidad')
+                ->WhereIn('modalidad' , $modalidades)
+                ->Where(function ($query) use($nomb) {
+                    for ($i = 0; $i < count($nomb); $i++){
+                        $query->where('nombre', 'like',  '%' . $nomb[$i] .'%');
+                    }
+                })
+                ->orderBy('nombre', 'asc')->groupBy('clave')->get();
+        }
+        elseif($value1 ==! 0 && $value2 ==! 0){
+            return DB::Table('cts')
+                ->select('clave', 'nombre','nombre_mun', 'localidad')
+                ->WhereIn('modalidad' , $modalidades)
+                ->Where('nombre_mun' , $array1)
+                ->Where(function ($query) use($nomb) {
+                    for ($i = 0; $i < count($nomb); $i++){
+                        $query->where('nombre', 'like',  '%' . $nomb[$i] .'%');
+                    }
+                })->orderBy('nombre', 'asc')->groupBy('clave')->get();
+        }
+
+    }
+
+    public function searchDocentes($nombre){
+        $nomb = explode(' ', $nombre);
+        //var_dump($nombre); die;
+
+        $name = DB::Table('plantilla')
+            ->select('rfc', 'nombre')
+            ->Where(function ($query) use($nomb) {
+                for ($i = 0; $i < count($nomb); $i++){
+                    $query->where('nombre', 'like',  '%' . $nomb[$i] .'%');
+                }
+            })->orderBy('nombre', 'asc')->groupBy('rfc')->get();
+
+        return $name;
+    }
+
+    public function filterDocentes($nombre, $mun){
+        $nomb = explode(' ', $nombre);
+        //var_dump($nombre); die;
+
+        $name = DB::Table('plantilla')
+            ->select('rfc', 'nombre')
+            ->Where('nombre_mun' , $mun)
+            ->Where(function ($query) use($nomb) {
+                for ($i = 0; $i < count($nomb); $i++){
+                    $query->where('nombre', 'like',  '%' . $nomb[$i] .'%');
+                }
+            })->orderBy('nombre', 'asc')->groupBy('rfc')->get();
+
+        return $name;
+    }
+
+    public function searchUser($user){
+        $verify = Usuarios::where('user', '=', $user )->get();
+
+        if(count($verify) > 0){
+            return 1;
+        } else {
+            return 2;
+        }
+    }
+
+    public function loginFor($user, $pass){
+        $verify = Usuarios::where('user', '=', $user)->where('pass', '=', $pass)->get();
+        if(count($verify) > 0){
+            return 1;
+        } else {
+            return 2;
+        }
+    }
+
+    public function blog(){
+        return Blog::all();
+    }
+
+    public function article($id){
+        return Blog::where('id', '=', $id )->first();
     }
 
 }
